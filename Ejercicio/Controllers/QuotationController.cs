@@ -24,13 +24,26 @@ namespace Ejercicio.Controllers
             {"libra","GBP" },
         };
 
-        [Route("")]
+        [Route("monedas")]
         public IHttpActionResult GetAllCurrencies()
         {
-            var url = this.GetAPIURLWithKey();
-            //TODO: Implementar logica para devolver coleccion de todas las 
-            //monedas DEFINIDAS
-            return Ok("");
+            var quotationResponseCollection = new QuotationResponseDTO[validCurrencies.Count];
+            var i = 0;
+
+            foreach (var key in validCurrencies.Keys)
+            {
+                var currentCurrencyIsoCode = validCurrencies[key];
+                var url = this.GetCurrencyQuotationURLByISOCode(currentCurrencyIsoCode);
+                var wc = (new WebClient());
+                wc.Headers[HttpRequestHeader.ContentType] = "application/json";
+                var jsonData = wc.DownloadString(url);
+                var quotationResponse = JsonConvert.DeserializeObject<QuotationResponse>(jsonData);
+                var quotationResponseDTO = new QuotationResponseDTO() { Currency = quotationResponse.Result.Source, Price = quotationResponse.Result.Value };
+                quotationResponseCollection[i] = quotationResponseDTO;
+                i++;
+            }
+            
+            return Ok(quotationResponseCollection);
         }
 
         [Route("{currency}")]
