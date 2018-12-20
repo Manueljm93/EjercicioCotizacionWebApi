@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Ejercicio",
+    "\\Ejercicio\\App_Start",
+    "\\Ejercicio\\Controllers",
+    "\\Ejercicio\\DTO",
+    "\\Ejercicio\\Models",
+    "\\Ejercicio\\Views",
+    "\\Ejercicio\\Views\\Home",
+    "\\Ejercicio\\Views\\Shared"
+  ],
+  "SelectedNode": "\\Ejercicio\\Views\\Home\\Index.cshtml",
+  "PreviewInSolutionExplorer": false
+}

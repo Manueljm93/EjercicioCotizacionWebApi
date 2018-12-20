@@ -2,17 +2,30 @@
     <h1>Cotizaciones en pesos argentinos(ARS)</h1>
 </div>
 <div class="row" id="js-quotations-container">
-    <div id="js-prototype" style="display: none;">
-        <div class="col-md-4" style="padding: 15px;height: 50px;">
-            <div>
-                <h2>$__currency</h2>
-                <h3>$ $__price</h3>
-            </div>
-            <div class="clearfix"></div>
+    <div class="col-md-12" style="text-align: center;" id="js-timer-text">
+        <h2>5</h2>
+    </div>
+</div>
+<div id="js-prototype" style="display: none;">
+    <div class="col-md-4 text-center">
+        <div>
+            <h2>$__currency</h2>
+            <h3>$ $__price</h3>
         </div>
+        <div class="clearfix"></div>
     </div>
 </div>
 <script>
+    let start = 6;
+
+    setInterval(function () {
+        start--;
+        $('#js-timer-text h2').text(start);
+        if (start <= 0) {
+            start = 6;
+        }
+    }, 1000);
+
     $(document).ready(function () {
         ajaxGetQuotationsAndRender();
         setInterval(function () {
@@ -25,7 +38,7 @@
             url: "/api/cotizacion/monedas",
             success: function (response) {
                 var $prototype = $('#js-prototype');
-                $prototype.siblings().remove();
+                $('#js-timer-text').siblings().remove();
                 for (var i = 0; i < response.length; i++) {
                     var currentCurrency = response[i];
                     var prototypeHTML = $prototype
