@@ -32,17 +32,12 @@ namespace Ejercicio.Controllers
 
             foreach (var key in validCurrencies.Keys)
             {
-                var currentCurrencyIsoCode = validCurrencies[key];
-                var url = this.GetCurrencyQuotationURLByISOCode(currentCurrencyIsoCode);
-                var wc = (new WebClient());
-                wc.Headers[HttpRequestHeader.ContentType] = "application/json";
-                var jsonData = wc.DownloadString(url);
-                var quotationResponse = JsonConvert.DeserializeObject<QuotationResponse>(jsonData);
-                var quotationResponseDTO = new QuotationResponseDTO() { Currency = quotationResponse.Result.Source, Price = quotationResponse.Result.Value };
+                var currentCurrencyISOcode = validCurrencies[key];
+                var quotationResponseDTO = this.GetQuotation(currentCurrencyISOcode);
                 quotationResponseCollection[i] = quotationResponseDTO;
                 i++;
             }
-            
+
             return Ok(quotationResponseCollection);
         }
 
@@ -50,23 +45,18 @@ namespace Ejercicio.Controllers
         public IHttpActionResult GetByISOCode(string currency)
         {
             //Tomamos por defecto que vamos a buscar dolar
-            var ISOCode = validCurrencies["dolar"];
+            var ISOcode = validCurrencies["dolar"];
 
             //Intentamos encontrar la moneda que nos hayan pasado
             //como parametro por url
             if (validCurrencies.ContainsKey(currency))
             {
-                ISOCode = validCurrencies[currency];
+                ISOcode = validCurrencies[currency];
             }
 
-            var url = this.GetCurrencyQuotationURLByISOCode(ISOCode);
-            var wc = (new WebClient());
-            wc.Headers[HttpRequestHeader.ContentType] = "application/json";
-            var jsonData = wc.DownloadString(url);
-            QuotationResponse quotationResponse = JsonConvert.DeserializeObject<QuotationResponse>(jsonData);
-            var quotationResponseDTO = new QuotationResponseDTO() { Currency = quotationResponse.Result.Source, Price = quotationResponse.Result.Value };
+            var quotationResponseDTO = this.GetQuotation(ISOcode);
 
-            return Ok(JsonConvert.SerializeObject(quotationResponseDTO));
+            return Ok(quotationResponseDTO);
         }
 
         private string GetCurrencyQuotationURLByISOCode(string ISOCode)
@@ -77,6 +67,17 @@ namespace Ejercicio.Controllers
         private string GetAPIURLWithKey()
         {
             return this.apiURL.Replace("{key}", QuotationController.apiKey);
+        }
+
+        private QuotationResponseDTO GetQuotation(string ISOcode)
+        {
+            var url = this.GetCurrencyQuotationURLByISOCode(ISOcode);
+            var wc = (new WebClient());
+            wc.Headers[HttpRequestHeader.ContentType] = "application/json";
+            var jsonData = wc.DownloadString(url);
+            QuotationResponse quotationResponse = JsonConvert.DeserializeObject<QuotationResponse>(jsonData);
+
+            return new QuotationResponseDTO() { Currency = quotationResponse.Result.Source, Price = quotationResponse.Result.Value };
         }
     }
 }
